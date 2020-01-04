@@ -20,7 +20,7 @@ rtf_exporters = [
         "name": "lowriter",
         "command": ["/usr/bin/lowriter",
                         "--headless",
-                        "--convert-to", "html:X HTML Writer File", "--outdir", "<od>",
+                        "--convert-to", "html:XHTML Writer File", "--outdir", "<od>",
                         "<file>"],
         "normalizer": LORTFHTMLNormalizer
     }
@@ -29,13 +29,9 @@ rtf_exporters = [
 class RTFNormalizer:
     def __init__(self, raw_file):
         self._file_name = raw_file
-        self._temp_dir = None
         self._delegate = None
 
     def prepare(self):
-        self._temp_dir = tempfile.TemporaryDirectory(dir="/tmp")
-        logging.info(f"Created new temporary directory [{self._temp_dir.name}]")
-
         assert(len(rtf_exporters) > 0)
         exporter = rtf_exporters[0]
 
@@ -43,7 +39,7 @@ class RTFNormalizer:
 
         cmd = []
         for c in exporter['command']:
-            if c == '<od>': cmd.append(self._temp_dir.name)
+            if c == '<od>': cmd.append('.')
             elif c == '<file>': cmd.append(self._file_name)
             else: cmd.append(c)
 
@@ -55,7 +51,7 @@ class RTFNormalizer:
             return 1
 
         self._delegate = exporter['normalizer'](
-            self._temp_dir.name + '/' + os.path.basename(self._file_name) + '.html'
+            (self._file_name[:-4] if self._file_name.endswith('.rtf') else self._file_name) + '.html'
         )
         return self._delegate.prepare()
 
@@ -71,6 +67,11 @@ class RTFNormalizer:
         assert(self._delegate is not None)
         return self._delegate.emit(stream)
 
-    def __del__(self):
-        if self._temp_dir is not None:
-            self._temp_dir.cleanup()
+if __name__ == '__main__':
+    import sys
+    logging.basicConfig(level=logging.DEBUG)
+    rtfn = RTFNormalizer(sys.argv[1])
+    rtfn.prepare()
+    rtfn.scan()
+    rtfn.generate()
+    rtfn.emit(open(sys.argv[2], 'w'))
