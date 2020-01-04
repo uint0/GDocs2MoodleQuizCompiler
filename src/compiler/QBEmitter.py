@@ -72,7 +72,7 @@ class QBEmitter:
         # <name><text>QUESTION NAME</text></name>
         tmp = xml.SubElement(question, 'name')
         tmp = xml.SubElement(tmp,      'text')
-        tmp.text = str(q.title)[:10]  # TODO: better generation scheme for question names
+        tmp.text = str(q.title)[:32] + '...' # TODO: better generation scheme for question names
 
         # <questiontext><text>QUESTION TEXT</text></questiontext>
         tmp = xml.SubElement(question, 'questiontext', {'format': 'html'})
@@ -85,13 +85,34 @@ class QBEmitter:
 
         # <defaultgrade></defaultgrade>
         tmp = xml.SubElement(question, 'defaultgrade')
-        tmp.text = '1.0000000'
+        tmp.text = str(len(q.answers.answers)) # NOTE: For weighing everything the same: '1.0000000'
 
         # <penalty></penalty>
         tmp = xml.SubElement(question, 'penalty')
-        tmp.text = '0' # TODO !important: fill this in
+        tmp.text = '0'
 
         # TODO !important: fill in rest default fields
+        # <hidden>, <single>, <shuffleanswers>, <answernumbering>, <correctfeedback>, <partiallycorrectfeedback>
+        # <incorrectfeedback>
+        defaults = {
+            'hidden': '0',
+            'single': 'false',
+            'shuffleanswers': 'false',  # NOTE: For shuffling answers 'true',
+            'answernumbering': 'abc'
+        }
+        feedback_defaults = {
+            'correctfeedback': 'Your answer is correct.',
+            'partiallycorrectfeedback': 'Your answer is partially correct.',
+            'incorrectfeedback': 'Your answer is incorrect.'
+        }
+        for field, val in defaults.items():
+            tmp = xml.SubElement(question, field)
+            tmp.text = val
+
+        for field, val in feedback_defaults.items():
+            tmp = xml.SubElement(question, field, {'format': 'html'})
+            tmp = xml.SubElement(tmp, 'text')
+            tmp.text = val
 
         self.emit_answerset(q.answers, question)
 

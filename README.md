@@ -7,6 +7,7 @@ requiring an additional dependancy on libreoffice.
 For more details on internals please see the `docs/` folder.
 
 ## Installation
+This utility only depends on `beautifulsoup4` for parsing HTML IR. If you wish to also 
 
 ## Usage
 

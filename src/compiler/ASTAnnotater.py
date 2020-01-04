@@ -95,9 +95,37 @@ class ASTAnnotator:
         assert isinstance(el, ast_bs.ListGroup)
 
         anss = ast_el.AnswerSet()
+
+        # NOTE: We treat (Y) as indicative of a correct answer
+        # NOTE: We aim to produce a marking scheme which achieves the following
+        #       For each question, a correct answer produces +1 mark, and each incorrect answer
+        #       produces -0.5 marks, with the total score per question being capped at 0
+        #
+        #       We are not concerned with relative important, i.e. a question with 100 correct answers
+        #       will be worth 100 marks, even if it is less challenging than a question with 1 correct answer
+        #       (which would be worth one mark). In order to normalize the relative weights, it is nessecary
+        # NOTE: marking scheme is calculated as follows
+        #       A question with `n` correct answers is allocated n marks.
+        #       a   correct answer is weighted    1/(# correct) * 100
+        #       a incorrect answer is weighted -0.5/(# correct) * 100
+        #
+        #       
+        n_correct   = sum(1 for child in el.children if '(Y)' in str(child.title))
+
+        # Due to moodle not allowing arbitrary weighitngs this may not work
+        correct_weight   =  1/n_correct * 100
+        incorrect_weight = -2/(len(el.children) - n_correct) * 100
+
         for child in el.children:
             assert child.depth == 0
-            anss.add_answer(self.anno_answer(child))
+            mark = incorrect_weight
+            if '(Y)' in str(child.title):
+                child.title.set_text(str(child.title).replace('(Y)', ''))
+                mark = correct_weight
+
+            answer = self.anno_answer(child)
+            answer.marks = mark
+            anss.add_answer(answer)
 
         return anss
 

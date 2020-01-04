@@ -94,6 +94,9 @@ class Answer:
     @property
     def marks(self): return self._marks
 
+    @marks.setter
+    def marks(self, v): self._marks = v
+
     @property
     def text(self): return self._text
 
