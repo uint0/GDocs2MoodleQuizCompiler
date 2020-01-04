@@ -65,7 +65,25 @@ class QBEmitter:
 
     def emit_super(self, s, root):
         assert isinstance(s, ast_el.QuestionSuper)
-        # TODO: emit description field
+        # If a super contains a description we emit it here
+        if s.title is not None:
+            title = str(s.title)
+            question = xml.SubElement(root, 'question', {'type': 'description'})
+
+            name = xml.SubElement(question, 'name')
+            name_text = xml.SubElement(name, 'text')
+            name_text.text = title[:32] + '...'
+
+            question_text = xml.SubElement(question, 'questiontext', {'format': 'html'})
+            question_text = xml.SubElement(question_text, 'text')
+            question_text.text = title
+
+            tmp = xml.SubElement(question, 'generalfeedback', {'format': 'html'})
+            tmp = xml.SubElement(tmp, 'text')
+            defaults = {'defaultgrade': '0.0000000', 'penalty': '0.0000000', 'hidden': '0'}
+            for field, val in defaults.items():
+                tmp = xml.SubElement(question, field)
+                tmp.text = val
 
         self.emit_question_set(s.sub_questions, root)
 

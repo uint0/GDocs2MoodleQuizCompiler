@@ -104,15 +104,16 @@ class ASTAnnotator:
         #       We are not concerned with relative important, i.e. a question with 100 correct answers
         #       will be worth 100 marks, even if it is less challenging than a question with 1 correct answer
         #       (which would be worth one mark). In order to normalize the relative weights, it is nessecary
+        #       to perform weighting within the quiz definition. That is not in scope for this project.
+        #
         # NOTE: marking scheme is calculated as follows
         #       A question with `n` correct answers is allocated n marks.
         #       a   correct answer is weighted    1/(# correct) * 100
         #       a incorrect answer is weighted -0.5/(# correct) * 100
-        #
         #       
         n_correct   = sum(1 for child in el.children if '(Y)' in str(child.title))
 
-        # Due to moodle not allowing arbitrary weighitngs this may not work
+        # NOTE: Due to moodle not allowing arbitrary weighitngs this may not work
         correct_weight   =  1/n_correct * 100
         incorrect_weight = -0.5/n_correct * 100
 
