@@ -11,3 +11,7 @@ This utility only depends on `beautifulsoup4` for parsing HTML IR. If you wish t
 
 ## Usage
 
+## TODOs
+ - Images and tables are present within the IR, they are however stripped during the final production. Ideally these would be kept so Images do not need to be manually inserted.
+ - Currently the quiz itself is not generated, ideally a moodle backup just for the quiz could be generated and restored.
+ - The tagger is not implemented
