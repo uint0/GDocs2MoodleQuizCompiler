@@ -114,7 +114,7 @@ class ASTAnnotator:
 
         # Due to moodle not allowing arbitrary weighitngs this may not work
         correct_weight   =  1/n_correct * 100
-        incorrect_weight = -2/(len(el.children) - n_correct) * 100
+        incorrect_weight = -0.5/n_correct * 100
 
         for child in el.children:
             assert child.depth == 0

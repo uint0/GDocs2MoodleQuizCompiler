@@ -19,14 +19,13 @@ Question-Set 1 [role=Question]
                       \_____________ Question 4 [title=Title]
                                      \_________ Answer-Set 5
                                                 \___________ Answer 6
-All meta groupings are preserved by tagging.
-I.e. Question-Set 1   is untagged
-     Question-Super 2 is   tagged [QSet=quiz_id-1]
 
+Grouping is done by category - i.e. each emission is associated with one category. This is since moodle
+does not support adding from tags.
 """
 
 from ast_elements import base as ast_bs, extended as ast_el
-from xml.dom import minidom
+import datetime
 import xml.etree.ElementTree as xml
 
 class QBEmitter:
@@ -37,11 +36,21 @@ class QBEmitter:
 
     def emit_root(self):
         root = xml.Element('quiz')
+        self.emit_category(root)
         self.emit_question_set(self._ast, root)
 
         # Support python3.7
         self._root = root
         return root
+
+    def emit_category(self, root, parent_group=None):
+        if parent_group is None:
+            parent_group = datetime.datetime.today().year
+
+        question = xml.SubElement(root, 'question', {'type': 'category'})
+        category = xml.SubElement(question, 'category')
+        text     = xml.SubElement(category, 'text')
+        text.text = f"$course$/Earth & Environmental Summer School/{parent_group}/{self._quiz_id}"
 
     def emit_question_set(self, qs, root):
         assert isinstance(qs, ast_el.QuestionSet)
@@ -145,7 +154,4 @@ class QBEmitter:
 
 
     def __str__(self):
-        # Pretty by default
-        rough_string = xml.tostring(self._root, encoding='unicode')
-        reparsed = minidom.parseString(rough_string)
-        return reparsed.toprettyxml(indent="  ")
+        return xml.tostring(self._root, xml_declaration=True,  encoding='unicode', short_empty_elements=False)

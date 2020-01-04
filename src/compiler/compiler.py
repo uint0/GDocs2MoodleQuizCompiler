@@ -4,8 +4,9 @@ from ASTAnnotater import ASTAnnotator
 from QBEmitter import QBEmitter
 
 class Compiler:
-    def __init__(self, ir_file):
+    def __init__(self, ir_file, quiz_name):
         self._ir_filename = ir_file
+        self._quiz_name = quiz_name
         self._html = None
         self._ast = None
 
@@ -33,7 +34,7 @@ class Compiler:
 
     def emit(self):
         assert(self._aast is not None)
-        self._emitted = QBEmitter(self._aast.get_root(), 'test-quiz')
+        self._emitted = QBEmitter(self._aast.get_root(), self._quiz_name)
         self._emitted.emit_root()
 
         return str(self._emitted)
@@ -53,7 +54,7 @@ class Compiler:
 if __name__ == '__main__':
     import sys
 
-    compiler = Compiler(sys.argv[1])
+    compiler = Compiler(sys.argv[1], sys.argv[2])
     compiler.prepare()
     compiler.scan()
     compiler.generate()

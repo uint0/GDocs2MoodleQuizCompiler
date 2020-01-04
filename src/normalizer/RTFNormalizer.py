@@ -55,7 +55,7 @@ class RTFNormalizer:
             return 1
 
         self._delegate = exporter['normalizer'](
-            self._temp_dir.name + '/' + os.path.basename(self._file_name) + '.html' 
+            self._temp_dir.name + '/' + os.path.basename(self._file_name) + '.html'
         )
         return self._delegate.prepare()
 

@@ -37,7 +37,7 @@ class LORTFHTMLNormalizer:
         # TODO: add non-top level MCQ/list support (current MCQ/question list must be a child of body)
         # TODO: add naked text support (it is current skipped)
         # TODO: add intelligent selection based on ol[start]
-        
+
         # NOTE: This notably (hehe) misses any question sets that are nested within an element
         lists = []
         mcq_mode = False
