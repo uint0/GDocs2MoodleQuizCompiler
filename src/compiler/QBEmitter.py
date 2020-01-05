@@ -118,7 +118,6 @@ class QBEmitter:
         tmp = xml.SubElement(question, 'penalty')
         tmp.text = '0'
 
-        # TODO !important: fill in rest default fields
         # <hidden>, <single>, <shuffleanswers>, <answernumbering>, <correctfeedback>, <partiallycorrectfeedback>
         # <incorrectfeedback>
         defaults = {
