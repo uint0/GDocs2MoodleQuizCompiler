@@ -31,7 +31,7 @@ class RTFNormalizer:
         self._file_name = raw_file
         self._delegate = None
 
-    def prepare(self):
+    def prepare(self, out_dir='.'):
         assert(len(rtf_exporters) > 0)
         exporter = rtf_exporters[0]
 
@@ -39,7 +39,7 @@ class RTFNormalizer:
 
         cmd = []
         for c in exporter['command']:
-            if c == '<od>': cmd.append('.')
+            if c == '<od>': cmd.append(out_dir)
             elif c == '<file>': cmd.append(self._file_name)
             else: cmd.append(c)
 
